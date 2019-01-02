@@ -1,0 +1,73 @@
+<apex:page docType="html-5.0" controller="ProductListController">
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Product List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+    
+  <apex:slds />
+</head>
+<body>
+	<div class="slds-scope">
+        <div >
+            <h1 class="slds-text-heading--large slds-m-vertical--large"><b>Product List</b></h1>
+        </div>
+
+              
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+            <thead class="slds-text-heading_label">
+                <tr class="slds-line-height_reset">
+                    
+                    <th class="slds-text-title_caps " scope="col">IMAGE</th>
+                    <th class="slds-text-title_caps " scope="col"></th>
+                    <th class="slds-text-title_caps " scope="col">DESCRIPTION</th>
+                    <th class="slds-text-title_caps " scope="col">COST</th>
+                    <th class="slds-text-title_caps " scope="col"></th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <apex:repeat value="{!products}" var="prod">
+                    <tr class="slds-hint-parent">
+                    
+                        
+                        <th data-label="IMAGE" scope="row">
+                        <div class="slds-truncate" ><img width="200" height="150" src="{! prod.Image_Url__c}"  /> </div>
+                        </th>
+    
+                        <td data-label="Product Name">
+                            <div class="slds-truncate"> <apex:outputLink value="/apex/ShowDetailDescription?core.apexpages.request.devconsole=1&id={! prod.Id}" target="_blank">{! prod.Name}</apex:outputLink></div>
+                        </td>
+                        
+                        <td data-label="DESCRIPTION">
+                            <apex:outputText value="{! if ( LEN(prod.Product_Description__c)>100, LEFT(prod.Product_Description__c,100 )+'...', prod.Product_Description__c)}"></apex:outputText>
+                            <apex:outputLink value="/apex/ShowDetailDescription?core.apexpages.request.devconsole=1&id={! prod.Id}" target="_blank">{! if(LEN(prod.Product_Description__c)>100, 'More','')}</apex:outputLink>
+                        </td>
+                        
+                        <td data-label="COST">
+                            <div class="slds-truncate">{! prod.Unit_Price__c} $</div>
+                        </td>
+                        
+                        <td data-label="BUTTON">
+                            <div>
+                                <button onclick="location.href = '/apex/BuyProductPage?core.apexpages.request.devconsole=1&id={! prod.Id}'" class="slds-button slds-button_brand">Buy</button>
+                            </div>
+                        </td>
+                    
+         
+                    </tr>
+                </apex:repeat>
+
+            </tbody>
+        </table>
+	</div>
+    
+    
+    
+</body>
+</html>
+    
+</apex:page>

@@ -1,0 +1,164 @@
+<apex:page id="BuyProductPage" docType="html-5.0" controller="BuyProductPageContrioller">
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Purchase {! product.Name}</title> 
+  <apex:slds />
+</head>
+<body>
+    
+    <div class="slds-scope">
+        
+        
+        <!-- PAGE HEADER -->
+        <div class="slds-grid slds-gutters  slds-theme_shade">
+            <div class="slds-col slds-size_1-of-2">
+            	<div class="slds-text-heading--large slds-m-vertical--large slds-text-align_center ">Contact Information</div>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+            	<div class="slds-text-heading--large slds-m-vertical--large slds-text-align_center ">Product Information</div>                
+            </div>
+        </div>
+		<!-- PAGE HEADER -->
+        
+		<div class="slds-grid slds-gutters slds-wrap">
+            
+            <!-- CONTACT INFORMATION -->
+            <div class="slds-col slds-size_1-of-8 slds-text-align_right slds-text-heading--medium slds-m-vertical--large">
+                Email
+                <div class="slds-m-vertical--large">First Name</div> 
+                Last Name            
+            </div>
+            <div class="slds-col slds-size_3-of-8 slds-text-heading--medium slds-m-vertical--large slds-text-align_left">
+				<div class="slds-form-element slds-form-element__control">
+                    <input id="email" class="slds-input" type="email" value="" style="width:350px;"/>
+                </div>
+				<div class="slds-form-element slds-form-element__control slds-m-vertical--large">
+                    <input id="firstName" class="slds-input" type="text" value="" style="width:350px;"/>
+                </div>                
+				<div class="slds-form-element slds-form-element__control">
+                    <input id="lastName" class="slds-input" type="text" value="" style="width:350px;" />
+                </div>                
+            </div>
+			<!-- CONTACT INFORMATION -->            
+            
+            <!-- PRODUCT INFORMATION -->
+            <div class="slds-col slds-size_1-of-8 slds-text-align_right slds-text-heading--medium slds-m-vertical--large">
+                Product Name
+                <div class="slds-m-vertical--large">Cost</div>
+                Unit Count
+                <div class="slds-m-vertical--large">Total Amount</div>
+            </div>
+            <div class="slds-col slds-size_3-of-8 slds-text-heading--medium slds-m-vertical--large slds-text-align_left">
+				<p>{! product.Name}</p>
+                <p class="slds-m-vertical--large">{! product.Unit_Price__c} $</p>
+                <div class="slds-form-element slds-form-element__control">
+                    <input onchange="showPrice()" id="unitCount" class="slds-input" type="number" value="0" min="1" style="width:200px;"/>
+                </div>  
+                <p id="totalAmount" class="slds-m-vertical--large">0 $</p>
+            </div>
+        </div> 
+		<!-- PRODUCT INFORMATION -->
+        
+        <!-- INFOWINDOW -->
+        <div class="slds-hide" id="windowID" style="height: 24rem;">
+            <section role="alertdialog" tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal_prompt" aria-modal="true">
+                <div class="slds-modal__container">
+                    <header id="windowTheme" class="slds-modal__header slds-theme_error slds-theme_alert-texture">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                            <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close" />
+                            </svg>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 class="slds-text-heading_medium" id="prompt-heading-id">Purchase Result</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="prompt-message-wrapper">
+                        <p id="textMessage">The purchase was UNSUCCESSFUL.</p>
+                    </div>
+                    <footer class="slds-modal__footer slds-theme_default">
+                        <button onclick="setInvisible()" class="slds-button slds-button_neutral">Ok</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+        <!-- INFOWINDOW -->
+
+        <!-- PAGE FOOTER -->
+		<div class="slds-docked-form-footer">
+            <button onclick="location.href = '/apex/ShowProductList?core.apexpages.request.devconsole=1' " type="button" class="slds-button slds-button_neutral">To Shopping</button>
+            <button onclick="buyProductJS()" type="button" class="slds-button slds-button_brand">Buy</button>
+        </div> 
+        <!-- PAGE FOOTER -->
+        
+    </div>
+    
+    
+	
+    <script>
+    	
+    	function showPrice(){
+        	document.getElementById('totalAmount').innerHTML = document.getElementById('unitCount').value*{! product.Unit_Price__c}+" $";
+        }
+    
+    	function buyProductJS(){
+        	var email = document.getElementById('email').value;
+        	var firstName = document.getElementById('firstName');
+            var lastName = document.getElementById('lastName').value;
+            var unitCount = document.getElementById('unitCount').value;
+            
+            var re = /^[\w-\.]+@[\w-]+\.[a-z]{2,4}$/i;
+            var emailIsValid = re.test(email);
+            
+            if (emailIsValid && lastName != "" && unitCount <= {! product.Units_Available__c} && unitCount>0){
+            	
+                document.getElementById('windowTheme').classList.remove("slds-theme_error");
+                document.getElementById('windowTheme').classList.add("slds-theme_success");
+                
+                document.getElementById('textMessage').innerHTML = "The purchase was successful.";
+                
+                document.getElementById('windowID').classList.remove("slds-hide");
+                buyProductA(email, firstName ,lastName ,unitCount );
+            }else {
+                document.getElementById('textMessage').innerHTML = "The purchase was UNSUCCESSFUL.";                
+                if(!emailIsValid){
+                    document.getElementById('textMessage').innerHTML += "<br/><br/>INCORRECT EMAIL.<br/><br/>";
+                }
+                if (unitCount > {! product.Units_Available__c} || unitCount <= 0){
+                    document.getElementById('textMessage').innerHTML += " INCORRECT AMOUNT OF PRODUCT.<br/><br/>";
+                }
+                if (lastName == ""){
+                    document.getElementById('textMessage').innerHTML += " INCORRECT LAST NAME.<br/>";
+                }
+
+                document.getElementById('windowID').classList.remove("slds-hide");                
+            }
+        }
+    
+    	function setInvisible(){
+        	document.getElementById('windowID').classList.add("slds-hide");
+            if ( document.getElementById("windowTheme").classList.contains("slds-theme_success") ){
+                document.location.href = "/apex/ShowProductList?core.apexpages.request.devconsole=1";
+            }
+        }
+    
+
+    </script>
+    
+    <apex:form >
+    	
+        <apex:actionFunction name="buyProductA"
+                             action="{! buyProduct}"
+                             reRender="BuyProductPage">
+        	<apex:param name="email" value="" />
+            <apex:param name="firstName" value="" />
+            <apex:param name="lastName" value=""/>
+            <apex:param name="unitCount" value=""/>
+        </apex:actionFunction>
+        
+    </apex:form>
+    <!--location.href = '/apex/BuyProductPage?core.apexpages.request.devconsole=1&id={! product.Id}-->
+</body>
+</html>
+</apex:page>

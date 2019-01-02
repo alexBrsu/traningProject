@@ -1,0 +1,41 @@
+<apex:page docType="html-5.0" standardController="Product_Table__c">
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>{! Product_Table__c.Name}</title> 
+  <apex:slds />
+</head>
+<body>
+	<div class="slds-scope">
+        <div class="slds-text-heading--large slds-m-vertical--large slds-text-align_center slds-theme_shade">
+            {! Product_Table__c.Name}
+        </div>
+        
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_1-of-2">
+                <div class="slds-text-align_center" ><img width="400" height="350" src="{! Product_Table__c.Image_Url__c}"  /> </div>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <dl class="slds-list_stacked ">
+                    <dt class="slds-item_label slds-text-color_weak slds-truncate " >AMOUNT:</dt>
+                    <dd class="slds-item_detail " ><apex:outputText value="{0, number, 0}"><apex:param value="{! Product_Table__c.Units_Available__c}"/></apex:outputText></dd>
+                    <dt class="slds-item_label slds-text-color_weak " >DESCRIPTION:</dt>
+                    <dd class="slds-item_detail" ><p>{! Product_Table__c.Product_Description__c}</p></dd>
+                </dl>
+            </div>
+        </div>
+        
+        
+		<div class="slds-docked-form-footer">
+            <button onclick="location.href = '/apex/ShowProductList?core.apexpages.request.devconsole=1' " type="button" class="slds-button slds-button_neutral">To Shopping</button>
+            <button onclick="location.href = '/apex/BuyProductPage?core.apexpages.request.devconsole=1&id={! Product_Table__c.Id}' " type="button" class="slds-button slds-button_brand">Buy</button>
+        </div>
+
+	</div>
+    
+    
+    
+</body>
+</html>
+    
+</apex:page>
